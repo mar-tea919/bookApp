@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "775785467271",
+    "project_id": "flutterapp01-350a4",
+    "storage_bucket": "flutterapp01-350a4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:775785467271:android:771be8b3242781897e1722",
+        "android_client_info": {
+          "package_name": "com.example.testapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "775785467271-d6375v971ecis3n5rit2n9rbfkbi5404.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA4nrwIyha_qoWtcBW-WecU-2wef8qZACo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "775785467271-d6375v971ecis3n5rit2n9rbfkbi5404.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:775785467271:android:d75fac4e66554dbd7e1722",
+        "android_client_info": {
+          "package_name": "com.syoribu.bookstore.doryoku"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "775785467271-d6375v971ecis3n5rit2n9rbfkbi5404.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA4nrwIyha_qoWtcBW-WecU-2wef8qZACo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "775785467271-d6375v971ecis3n5rit2n9rbfkbi5404.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

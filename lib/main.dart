@@ -31,7 +31,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   var _navIndex=0;
   var _label='';
-  var _titles=['貸出状況','貸出・返却','その他'];
+  List<Widget> titles=[nowLent(),Lent(),others()];
 
   @override
   Widget build(BuildContext context) {
@@ -39,8 +39,11 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: const Text('Syoribu Books App'),
       ),
+
+      body: titles[_navIndex],
+
       bottomNavigationBar: BottomNavigationBar(
-          items: [
+          items: const [
             BottomNavigationBarItem(
               icon: Icon(Icons.computer),
               title: Text('貸出状況'),
@@ -51,17 +54,43 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.apps),
-              title: Text('その他'),
+              title: Text('設定'),
             ),
           ],
+          currentIndex: _navIndex,
           onTap: (int index){
             setState(() {
               _navIndex=index;
-              _label=_titles[index];
             });
           },
-          currentIndex: _navIndex,
       ),
+    );
+  }
+}
+
+class nowLent extends StatelessWidget{
+  @override
+  Widget build(BuildContext context){
+    return const Scaffold(
+      body: Center(child: Text('Test Page1')),
+    );
+  }
+}
+
+class Lent extends StatelessWidget{
+  @override
+  Widget build(BuildContext context){
+    return const Scaffold(
+      body: Center(child: Text('Test Page2')),
+    );
+  }
+}
+
+class others extends StatelessWidget{
+  @override
+  Widget build(BuildContext context){
+    return const Scaffold(
+      body: Center(child: Text('Test Page3')),
     );
   }
 }

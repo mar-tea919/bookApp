@@ -1,6 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(new MyApp());
 }
 class MyApp extends StatelessWidget {
@@ -37,7 +41,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Syoribu Books App'),
+        title: const Text('処理部図書館'),
       ),
 
       body: titles[_navIndex],
@@ -46,15 +50,15 @@ class _MyHomePageState extends State<MyHomePage> {
           items: const [
             BottomNavigationBarItem(
               icon: Icon(Icons.computer),
-              title: Text('貸出状況'),
+              title:Text('貸出状況'),
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.assignment_rounded),
-              title: Text('貸出・返却'),
+              title:Text('蔵書一覧'),
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.apps),
-              title: Text('設定'),
+              title:Text('設定'),
             ),
           ],
           currentIndex: _navIndex,
@@ -81,7 +85,7 @@ class Lent extends StatelessWidget{
   @override
   Widget build(BuildContext context){
     return const Scaffold(
-      body: Center(child: Text('Test Page2')),
+      body: Center(child: Text('Test Page02')),
     );
   }
 }

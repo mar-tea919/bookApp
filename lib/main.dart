@@ -41,7 +41,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('処理部図書館'),
+        title: const Text('処理部図書館 Beta'),
       ),
 
       body: titles[_navIndex],
@@ -50,15 +50,15 @@ class _MyHomePageState extends State<MyHomePage> {
           items: const [
             BottomNavigationBarItem(
               icon: Icon(Icons.computer),
-              title:Text('貸出状況'),
+              label:'貸出状況',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.assignment_rounded),
-              title:Text('蔵書一覧'),
+              label:'蔵書一覧',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.apps),
-              title:Text('設定'),
+              label:'設定',
             ),
           ],
           currentIndex: _navIndex,
@@ -81,11 +81,38 @@ class nowLent extends StatelessWidget{
   }
 }
 
-class Lent extends StatelessWidget{
+class Lent extends State<MyHomePage>{
+  final firestore=FirebaseFirestore.instance;
   @override
   Widget build(BuildContext context){
     return const Scaffold(
-      body: Center(child: Text('Test Page02')),
+      body: SafeArea(
+          child: StreamBuilder(
+            stream: firestore.collection('books').snapshots(),
+            builder:(BuildContext context,AsyncSnapshot<QuerySnapshot> snapshot){
+              if(snapshot.hasError){
+                return Center(
+                  child: Text('データ取得に失敗しました'),
+                );
+              }
+              if(!snapshot.hasData){
+                return Center(
+                  child: Text("Loading…"),
+                );
+              }
+              return ListView(
+                children: snapshot.data!.docs.map((DocumentSnapshot document){
+                  Map<String,dynamic> message=document.data()! as Map<String,dynamic>;
+                  return Card(
+                    child: ListTile(
+                      title: Text(document['text']),
+                    ),
+                  );
+                }).toList(),
+              );
+            },
+          ),
+      ),
     );
   }
 }

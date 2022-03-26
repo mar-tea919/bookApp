@@ -1,127 +1,148 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(new MyApp());
+  runApp(TestApp());
 }
-class MyApp extends StatelessWidget {
 
+class TestApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Syoribu Books',
       theme: ThemeData(
-        brightness:Brightness.dark,
+        brightness: Brightness.dark,
         primarySwatch: Colors.blueGrey,
         primaryColor: const Color(0xFF212121),
         accentColor: const Color(0xFFffffff),
         canvasColor: const Color(0xFF303030),
       ),
-      home: MyHomePage(),
+      home: FirestoreLoad(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key ,key}) : super(key: key);
+class FirestoreLoad extends StatefulWidget {
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _MyFirestorePageState createState() => _MyFirestorePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class FireUp extends StatefulWidget{
+  @override
+  AppendBooks createState() => AppendBooks();
+}
 
-  var _navIndex=0;
-  var _label='';
-  List<Widget> titles=[nowLent(),Lent(),others()];
+class _MyFirestorePageState extends State<FirestoreLoad> {
+  // ドキュメント情報を入れる箱を用意
+  final Stream<QuerySnapshot> _bookStream=FirebaseFirestore.instance.collection('books').snapshots();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context){
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('処理部図書館 Beta'),
-      ),
-
-      body: titles[_navIndex],
-
-      bottomNavigationBar: BottomNavigationBar(
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.computer),
-              label:'貸出状況',
+      drawer: Drawer(
+        child: ListView(
+          // padding: EdgeInsets.zero,
+          children: [
+            ListTile(
+              title: Text('My 本棚'),
+              onTap: () {},
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.assignment_rounded),
-              label:'蔵書一覧',
+            ListTile(
+              title: Text('書籍の登録'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => FireUp(),
+                  ),
+                );
+              },
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.apps),
-              label:'設定',
+            ListTile(
+              title: Text('Third'),
+              onTap: () {},
             ),
           ],
-          currentIndex: _navIndex,
-          onTap: (int index){
-            setState(() {
-              _navIndex=index;
-            });
-          },
+        ),
       ),
+      appBar: AppBar(
+        // leading: IconButton(icon: Icon(Icons.menu),onPressed: () {}),
+        title: Text('Syoribu 蔵書管理App Beta'),
+        centerTitle: true,
+      ),
+      body: buildBookList(),
+    );
+  }
+
+  Widget buildBookList(){
+
+    return StreamBuilder<QuerySnapshot>(
+      stream: _bookStream,
+      builder: (BuildContext context,AsyncSnapshot<QuerySnapshot> snapshot){
+        if(snapshot.hasError){
+          return Text("エラーが発生しました。");
+        }
+
+        if(!snapshot.hasData){
+          return CircularProgressIndicator();
+        }
+
+        return ListView(
+          children: snapshot.data!.docs.map((DocumentSnapshot document){
+            Map<String,dynamic> data=document.data()! as Map<String,dynamic>;
+            return ListTile(
+              leading: Icon(Icons.article_outlined),
+              title: Text(data['bookname']),
+              subtitle: Text("在庫数:${data['zaiko']}"),
+              onTap: () {},
+            );
+          }).toList(),
+        );
+      },
     );
   }
 }
 
-class nowLent extends StatelessWidget{
+class AppendBooks extends State<FireUp>{
   @override
-  Widget build(BuildContext context){
-    return const Scaffold(
-      body: Center(child: Text('Test Page1')),
-    );
-  }
-}
+  Widget build(BuildContext context) {
 
-class Lent extends State<MyHomePage>{
-  final firestore=FirebaseFirestore.instance;
-  @override
-  Widget build(BuildContext context){
-    return const Scaffold(
-      body: SafeArea(
-          child: StreamBuilder(
-            stream: firestore.collection('books').snapshots(),
-            builder:(BuildContext context,AsyncSnapshot<QuerySnapshot> snapshot){
-              if(snapshot.hasError){
-                return Center(
-                  child: Text('データ取得に失敗しました'),
-                );
-              }
-              if(!snapshot.hasData){
-                return Center(
-                  child: Text("Loading…"),
-                );
-              }
-              return ListView(
-                children: snapshot.data!.docs.map((DocumentSnapshot document){
-                  Map<String,dynamic> message=document.data()! as Map<String,dynamic>;
-                  return Card(
-                    child: ListTile(
-                      title: Text(document['text']),
-                    ),
-                  );
-                }).toList(),
-              );
-            },
+    CollectionReference bk=FirebaseFirestore.instance.collection('books');
+
+    final bookController=TextEditingController();
+    final zaikoController=TextEditingController();
+
+    Future<void> addFirestoredata(){
+      return bk.add({
+        'bookname':bookController.text,
+        'zaiko' : zaikoController.text
+      });
+    }
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("書籍追加ページ"),
+      ),
+      body:Column(
+        children: [
+          TextField(
+            controller: bookController,
           ),
+          TextField(
+            controller: zaikoController,
+          ),
+          RaisedButton(
+              child: Text('決定'),
+              onPressed: () {
+                //Firebaseにアップしてから戻る
+                addFirestoredata();
+                Navigator.pop(context);
+              }
+          ),
+        ],
       ),
-    );
-  }
-}
-
-class others extends StatelessWidget{
-  @override
-  Widget build(BuildContext context){
-    return const Scaffold(
-      body: Center(child: Text('Test Page3')),
     );
   }
 }

@@ -29,10 +29,17 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  #Add the dependency for the Firebase Core Flutter SDK
+
+#Add the dependency for the Firebase Core Flutter SDK
   firebase_core: ^1.12.0
+  #  Firebase Auth
   firebase_auth: ^3.3.8
+  google_sign_in: ^4.5.6
+  #  Cloud Firestore
   cloud_firestore: ^3.1.9
+
+  flutter_riverpod: ^0.12.0
+  flutter_signin_button: ^1.1.0
 
 
   # The following adds the Cupertino Icons font to your application.

@@ -1,6 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:google_sign_in/google_sign_in.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,6 +36,8 @@ class FireUp extends StatefulWidget{
   AppendBooks createState() => AppendBooks();
 }
 
+
+//ホーム、Firestoreで得た情報を表示する
 class _MyFirestorePageState extends State<FirestoreLoad> {
   // ドキュメント情報を入れる箱を用意
   final Stream<QuerySnapshot> _bookStream=FirebaseFirestore.instance.collection('books').snapshots();
@@ -86,7 +90,9 @@ class _MyFirestorePageState extends State<FirestoreLoad> {
         }
 
         if(!snapshot.hasData){
-          return CircularProgressIndicator();
+          return const Center(
+              child: CircularProgressIndicator(),
+          );
         }
 
         return ListView(
@@ -105,6 +111,8 @@ class _MyFirestorePageState extends State<FirestoreLoad> {
   }
 }
 
+
+//本を追加するページ(Cloud FirestoreのAdd部分)
 class AppendBooks extends State<FireUp>{
   @override
   Widget build(BuildContext context) {
@@ -126,23 +134,34 @@ class AppendBooks extends State<FireUp>{
         title: Text("書籍追加ページ"),
       ),
       body:Column(
-        children: [
-          TextField(
-            controller: bookController,
-          ),
-          TextField(
-            controller: zaikoController,
-          ),
-          RaisedButton(
-              child: Text('決定'),
-              onPressed: () {
-                //Firebaseにアップしてから戻る
-                addFirestoredata();
-                Navigator.pop(context);
-              }
-          ),
-        ],
-      ),
+          children: [
+            TextField(
+              decoration: const InputDecoration(
+                  labelText: "書籍名",
+                  hintText: "ここに書籍名を入力 *",
+                  icon: Icon(Icons.article_outlined),
+              ),
+              controller: bookController,
+            ),
+            TextField(
+              maxLength: 3,
+              decoration: const InputDecoration(
+                  labelText: "在庫数",
+                  hintText: "部内で保有している書籍の数を入力 *",
+                  icon: Icon(Icons.bar_chart_outlined),
+              ),
+              controller: zaikoController,
+            ),
+            RaisedButton(
+                child: Text('決定'),
+                onPressed: () {
+                  //Firebaseにアップしてから戻る
+                  addFirestoredata();
+                  Navigator.pop(context);
+                }
+            ),
+          ],
+        ),
     );
   }
 }

@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.syoribu.bookstore.doryoku">
    <application
-        android:label="doryoku"
+        android:label="書籍管理App"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

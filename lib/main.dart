@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:google_sign_in/google_sign_in.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -50,11 +49,18 @@ class _MyFirestorePageState extends State<FirestoreLoad> {
           // padding: EdgeInsets.zero,
           children: [
             ListTile(
-              title: Text('My 本棚'),
-              onTap: () {},
+              title: const Text('My 本棚'),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => BooksList(),
+                    ),
+                );
+              },
             ),
             ListTile(
-              title: Text('書籍の登録'),
+              title: const Text('書籍の登録'),
               onTap: () {
                 Navigator.push(
                   context,
@@ -65,7 +71,7 @@ class _MyFirestorePageState extends State<FirestoreLoad> {
               },
             ),
             ListTile(
-              title: Text('Third'),
+              title: const Text('設定'),
               onTap: () {},
             ),
           ],
@@ -73,7 +79,7 @@ class _MyFirestorePageState extends State<FirestoreLoad> {
       ),
       appBar: AppBar(
         // leading: IconButton(icon: Icon(Icons.menu),onPressed: () {}),
-        title: Text('Syoribu 蔵書管理App Beta'),
+        title: const Text('Syoribu 蔵書管理App'),
         centerTitle: true,
       ),
       body: buildBookList(),
@@ -86,7 +92,7 @@ class _MyFirestorePageState extends State<FirestoreLoad> {
       stream: _bookStream,
       builder: (BuildContext context,AsyncSnapshot<QuerySnapshot> snapshot){
         if(snapshot.hasError){
-          return Text("エラーが発生しました。");
+          return const Text("通信エラー");
         }
 
         if(!snapshot.hasData){
@@ -99,10 +105,17 @@ class _MyFirestorePageState extends State<FirestoreLoad> {
           children: snapshot.data!.docs.map((DocumentSnapshot document){
             Map<String,dynamic> data=document.data()! as Map<String,dynamic>;
             return ListTile(
-              leading: Icon(Icons.article_outlined),
+              leading: const Icon(Icons.article_outlined),
               title: Text(data['bookname']),
               subtitle: Text("在庫数:${data['zaiko']}"),
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => detailBook(data['bookname']),
+                    ),
+                );
+              },
             );
           }).toList(),
         );
@@ -131,7 +144,7 @@ class AppendBooks extends State<FireUp>{
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("書籍追加ページ"),
+        title: const Text("書籍追加ページ"),
       ),
       body:Column(
           children: [
@@ -147,13 +160,13 @@ class AppendBooks extends State<FireUp>{
               maxLength: 3,
               decoration: const InputDecoration(
                   labelText: "在庫数",
-                  hintText: "部内で保有している書籍の数を入力 *",
+                  hintText: "ここに保有している書籍の数を入力 *",
                   icon: Icon(Icons.bar_chart_outlined),
               ),
               controller: zaikoController,
             ),
             RaisedButton(
-                child: Text('決定'),
+                child: const Text('決定'),
                 onPressed: () {
                   //Firebaseにアップしてから戻る
                   addFirestoredata();
@@ -162,6 +175,89 @@ class AppendBooks extends State<FireUp>{
             ),
           ],
         ),
+    );
+  }
+}
+
+class BooksList extends StatefulWidget{
+  @override
+  _MybooksList createState() => _MybooksList();
+}
+
+class _MybooksList extends State<BooksList>{
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('My 本棚'),
+        centerTitle: true,
+      ),
+      body: buildBookList(),
+    );
+  }
+
+  Widget buildBookList(){
+
+    final Stream<QuerySnapshot> _bookStream=FirebaseFirestore.instance.collection('books').snapshots();
+
+    return StreamBuilder<QuerySnapshot>(
+      stream: _bookStream,
+      builder: (BuildContext context,AsyncSnapshot<QuerySnapshot> snapshot){
+        if(snapshot.hasError){
+          return const Text("エラーが発生しました。");
+        }
+
+        if(!snapshot.hasData){
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+
+        return ListView(
+          children: snapshot.data!.docs.map((DocumentSnapshot document){
+            Map<String,dynamic> data=document.data()! as Map<String,dynamic>;
+            return ListTile(
+              leading: const Icon(Icons.article_outlined),
+              title: Text(data['bookname']),
+              subtitle: Text("在庫数:${data['zaiko']}"),
+              onTap: () {},
+            );
+          }).toList(),
+        );
+      },
+    );
+  }
+}
+
+class detailBook extends StatefulWidget{
+
+  detailBook(this.name);
+  String? name;
+
+  @override
+  _MydetailBook createState() => _MydetailBook(name);
+}
+
+class _MydetailBook extends State<detailBook>{
+
+  _MydetailBook(this.name);
+  String? name;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(name!),
+        centerTitle: true,
+      ),
+      body: Center(
+        child: Column(
+          children: [
+
+          ],
+        ),
+      ),
     );
   }
 }

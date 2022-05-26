@@ -13,12 +13,11 @@ class TestApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        useMaterial3: true,
+        colorSchemeSeed: Colors.blueGrey,
         brightness: Brightness.dark,
-        primarySwatch: Colors.blueGrey,
-        primaryColor: const Color(0xFF212121),
-        accentColor: const Color(0xFFffffff),
-        canvasColor: const Color(0xFF303030),
       ),
       home: FirestoreLoad(),
     );
@@ -34,7 +33,6 @@ class FireUp extends StatefulWidget{
   @override
   AppendBooks createState() => AppendBooks();
 }
-
 
 //ホーム、Firestoreで得た情報を表示する
 class _MyFirestorePageState extends State<FirestoreLoad> {
@@ -72,7 +70,14 @@ class _MyFirestorePageState extends State<FirestoreLoad> {
             ),
             ListTile(
               title: const Text('設定'),
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => Setup(),
+                    ),
+                );
+              },
             ),
           ],
         ),
@@ -160,7 +165,7 @@ class AppendBooks extends State<FireUp>{
               maxLength: 3,
               decoration: const InputDecoration(
                   labelText: "在庫数",
-                  hintText: "ここに保有している書籍の数を入力 *",
+                  hintText: "書籍の在庫数を入力 *",
                   icon: Icon(Icons.bar_chart_outlined),
               ),
               controller: zaikoController,
@@ -252,11 +257,28 @@ class _MydetailBook extends State<detailBook>{
         centerTitle: true,
       ),
       body: Center(
-        child: Column(
-          children: [
+        child: Text(name!),
+      ),
+    );
+  }
+}
 
-          ],
-        ),
+
+class Setup extends StatefulWidget{
+  @override
+  FireSetup createState() => FireSetup();
+}
+
+class FireSetup extends State<Setup>{
+  @override
+  Widget build(BuildContext context){
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Settings"),
+        centerTitle: true,
+      ),
+      body: const Center(
+        child: Text("あ"),
       ),
     );
   }

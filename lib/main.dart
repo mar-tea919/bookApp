@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+//自作ファイル
+import './reader.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -162,6 +165,7 @@ class AppendBooks extends State<FireUp>{
               controller: bookController,
             ),
             TextField(
+
               maxLength: 3,
               decoration: const InputDecoration(
                   labelText: "在庫数",
@@ -174,8 +178,8 @@ class AppendBooks extends State<FireUp>{
                 child: const Text('決定'),
                 onPressed: () {
                   //Firebaseにアップしてから戻る
-                  addFirestoredata();
-                  Navigator.pop(context);
+                    addFirestoredata();
+                    Navigator.pop(context);
                 }
             ),
           ],

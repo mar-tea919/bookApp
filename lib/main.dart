@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-//自作ファイル
-import './reader.dart';
+import './auth.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -82,6 +81,17 @@ class _MyFirestorePageState extends State<FirestoreLoad> {
                 );
               },
             ),
+            ListTile(
+              title: const Text('アカウント'),
+              onTap: (){
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => Auth(),
+                  ),
+                );
+              },
+            )
           ],
         ),
       ),

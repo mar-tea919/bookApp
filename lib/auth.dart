@@ -11,8 +11,7 @@ class Auth extends StatelessWidget{
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
-        colorSchemeSeed: Colors.blueGrey,
-        brightness: Brightness.dark,
+        colorSchemeSeed: Colors.green,
       ),
       initialRoute: FirebaseAuth.instance.currentUser==null ? '/sign-in' : '/profile',
       routes: {

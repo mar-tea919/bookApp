@@ -27,37 +27,38 @@ class SyoribuBook extends StatelessWidget {
   }
 }
 
-class HomeScreen extends StatefulWidget{
+class HomeScreen extends StatefulWidget {
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen>{
-  final _scr=[
+class _HomeScreenState extends State<HomeScreen> {
+  final _scr = [
     FirestoreLoad(),
     BooksList(),
     Setup(),
   ];
 
-  int _Selectedindex=0;
+  int _Selectedindex = 0;
 
-  void _ItemTap(int index){
-    setState((){
-      _Selectedindex=index;
+  void _ItemTap(int index) {
+    setState(() {
+      _Selectedindex = index;
     });
   }
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return Scaffold(
       body: _scr[_Selectedindex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _Selectedindex,
         onTap: _ItemTap,
         items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(icon: Icon(Icons.home),label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.account_circle),label: 'MyBooks'),
-          BottomNavigationBarItem(icon: Icon(Icons.tune),label: 'Customize'),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.account_circle), label: 'MyBooks'),
+          BottomNavigationBarItem(icon: Icon(Icons.tune), label: 'Customize'),
         ],
         type: BottomNavigationBarType.fixed,
       ),
@@ -70,7 +71,7 @@ class FirestoreLoad extends StatefulWidget {
   _MyFirestorePageState createState() => _MyFirestorePageState();
 }
 
-class FireUp extends StatefulWidget{
+class FireUp extends StatefulWidget {
   @override
   AppendBooks createState() => AppendBooks();
 }
@@ -78,10 +79,11 @@ class FireUp extends StatefulWidget{
 //ホーム、Firestoreで得た情報を表示する
 class _MyFirestorePageState extends State<FirestoreLoad> {
   // ドキュメント情報を入れる箱を用意
-  final Stream<QuerySnapshot> _bookStream=FirebaseFirestore.instance.collection('books').snapshots();
+  final Stream<QuerySnapshot> _bookStream =
+      FirebaseFirestore.instance.collection('books').snapshots();
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return Scaffold(
       drawer: Drawer(
         child: ListView(
@@ -112,20 +114,20 @@ class _MyFirestorePageState extends State<FirestoreLoad> {
               title: const Text('設定'),
               onTap: () {
                 Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => Setup(),
-                    ),
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Setup(),
+                  ),
                 );
               },
             ),
             ListTile(
               title: const Text('アカウント'),
-              onTap: (){
+              onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => Auth(),
+                    builder: (context) => Auth(),
                   ),
                 );
               },
@@ -142,44 +144,44 @@ class _MyFirestorePageState extends State<FirestoreLoad> {
     );
   }
 
-  Widget buildBookList(){
-
+  Widget buildBookList() {
     return StreamBuilder<QuerySnapshot>(
       stream: _bookStream,
-      builder: (BuildContext context,AsyncSnapshot<QuerySnapshot> snapshot){
-        if(snapshot.hasError){
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        if (snapshot.hasError) {
           return const Text("通信エラー");
         }
 
-        if(!snapshot.hasData){
+        if (!snapshot.hasData) {
           return const Center(
-              child: CircularProgressIndicator(),
+            child: CircularProgressIndicator(),
           );
         }
 
         return ListView(
-          children: snapshot.data!.docs.map((DocumentSnapshot document){
-            Map<String,dynamic> data=document.data()! as Map<String,dynamic>;
+          children: snapshot.data!.docs.map((DocumentSnapshot document) {
+            Map<String, dynamic> data =
+                document.data()! as Map<String, dynamic>;
             return SizedBox(
               height: 95,
-                child:Card(
-                  elevation: 3,
-                  margin: const EdgeInsets.fromLTRB(20,5,20,5),
-                  child: ListTile(
-                    dense: true,
-                    leading: const Icon(Icons.article_outlined),
-                    title: Text(data['name']),
-                    subtitle: Text("在庫数:${data['stock']}"),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => detailBook(data['name']),
-                        ),
-                      );
-                    },
-                  ),
+              child: Card(
+                elevation: 3,
+                margin: const EdgeInsets.fromLTRB(20, 5, 20, 5),
+                child: ListTile(
+                  dense: true,
+                  leading: const Icon(Icons.article_outlined),
+                  title: Text(data['name']),
+                  subtitle: Text("在庫数:${data['stock']}"),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => detailBook(data['name']),
+                      ),
+                    );
+                  },
                 ),
+              ),
             );
           }).toList(),
         );
@@ -188,21 +190,19 @@ class _MyFirestorePageState extends State<FirestoreLoad> {
   }
 }
 
-
 //本を追加するページ(Cloud FirestoreのAdd部分)
-class AppendBooks extends State<FireUp>{
+class AppendBooks extends State<FireUp> {
   @override
   Widget build(BuildContext context) {
+    CollectionReference bk = FirebaseFirestore.instance.collection('books');
 
-    CollectionReference bk=FirebaseFirestore.instance.collection('books');
+    final bookController = TextEditingController();
+    final zaikoController = TextEditingController();
 
-    final bookController=TextEditingController();
-    final zaikoController=TextEditingController();
-
-    Future<void> addFirestoredata(){
+    Future<void> addFirestoredata() {
       return bk.add({
-        'name':bookController.text,
-        'stock' : zaikoController.text,
+        'name': bookController.text,
+        'stock': zaikoController.text,
         'isLent': 0,
         'writer': "Null"
       });
@@ -212,7 +212,7 @@ class AppendBooks extends State<FireUp>{
       appBar: AppBar(
         title: const Text("書籍追加ページ"),
       ),
-      body:Center(
+      body: Center(
         child: Column(
           children: [
             Container(
@@ -249,8 +249,7 @@ class AppendBooks extends State<FireUp>{
                     //Firebaseにアップしてから戻る
                     addFirestoredata();
                     Navigator.pop(context);
-                  }
-              ),
+                  }),
             ),
           ],
         ),
@@ -259,9 +258,7 @@ class AppendBooks extends State<FireUp>{
   }
 }
 
-
-class detailBook extends StatefulWidget{
-
+class detailBook extends StatefulWidget {
   detailBook(this.name);
   String? name;
 
@@ -269,8 +266,7 @@ class detailBook extends StatefulWidget{
   _MydetailBook createState() => _MydetailBook(name);
 }
 
-class _MydetailBook extends State<detailBook>{
-
+class _MydetailBook extends State<detailBook> {
   _MydetailBook(this.name);
   String? name;
 
@@ -285,7 +281,7 @@ class _MydetailBook extends State<detailBook>{
         child: Text(name!),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: (){
+        onPressed: () {
           Navigator.pop(context);
         },
         tooltip: "本を借りる",
@@ -295,8 +291,7 @@ class _MydetailBook extends State<detailBook>{
   }
 }
 
-
-class Setup extends StatefulWidget{
+class Setup extends StatefulWidget {
   @override
   FireSetup createState() => FireSetup();
 }

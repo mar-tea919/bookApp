@@ -83,56 +83,6 @@ class _MyFirestorePageState extends State<FirestoreLoad> {
   @override
   Widget build(BuildContext context){
     return Scaffold(
-      drawer: Drawer(
-        child: ListView(
-          children: [
-            ListTile(
-              title: const Text('My 本棚'),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => BooksList(),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              title: const Text('書籍の登録'),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => FireUp(),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              title: const Text('設定'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => Setup(),
-                    ),
-                );
-              },
-            ),
-            ListTile(
-              title: const Text('アカウント'),
-              onTap: (){
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => Auth(),
-                  ),
-                );
-              },
-            )
-          ],
-        ),
-      ),
       appBar: AppBar(
         // leading: IconButton(icon: Icon(Icons.menu),onPressed: () {}),
         title: const Text('Syoribu-Library β'),
@@ -315,7 +265,7 @@ class FireSetup extends State<Setup> {
             margin: EdgeInsets.all(10),
             child: ListTile(
               leading: Icon(Icons.account_circle_outlined),
-              title: Text('Your Account'),
+              title: Text('アカウント'),
               onTap: () {
                 Navigator.push(
                     context, MaterialPageRoute(builder: (context) => Auth()));
@@ -326,7 +276,7 @@ class FireSetup extends State<Setup> {
             margin: EdgeInsets.all(10),
             child: ListTile(
               leading: Icon(Icons.add),
-              title: Text('Append Book'),
+              title: Text('本を借りる'),
               onTap: () {
                 Navigator.push(
                     context, MaterialPageRoute(builder: (context) => FireUp()));

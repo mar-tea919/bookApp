@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 
 import './auth.dart';
 import './bookstore.dart';
+import './barcode.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -143,6 +144,7 @@ class _MyFirestorePageState extends State<FirestoreLoad> {
 class AppendBooks extends State<FireUp>{
   @override
   Widget build(BuildContext context) {
+    final _formkey=GlobalKey<FormState>();
 
     CollectionReference bk=FirebaseFirestore.instance.collection('books');
 
@@ -167,27 +169,67 @@ class AppendBooks extends State<FireUp>{
           children: [
             Container(
               margin: EdgeInsets.all(20),
-              child: TextField(
-                decoration: const InputDecoration(
-                  labelText: "書籍名",
-                  hintText: "ここに書籍名を入力 *",
-                  icon: Icon(Icons.article_outlined),
+
+              child:Form(
+                key: _formkey,
+                child:TextFormField(
+                  autovalidateMode: AutovalidateMode.always,
+                  validator: (value){
+                    if(value!.isEmpty){
+                      return '値を入力してください';
+                    }
+                    return null;
+                  },
+                  onFieldSubmitted: (_){
+                    FocusScope.of(context).requestFocus();
+                  },
+                  decoration: const InputDecoration(
+                    labelText: "書籍名",
+                    hintText: "ここに書籍名を入力 *",
+                    icon: Icon(Icons.article_outlined),
+                  ),
+                  controller: bookController,
                 ),
-                controller: bookController,
               ),
             ),
             Container(
               margin: EdgeInsets.all(20),
-              child: TextField(
-                keyboardType: TextInputType.number,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                maxLength: 3,
-                decoration: const InputDecoration(
-                  labelText: "在庫数",
-                  hintText: "書籍の在庫数を入力",
-                  icon: Icon(Icons.bar_chart_outlined),
+              child: Form(
+                child:TextFormField(
+                  validator: (value){
+                    if(value!.isEmpty){
+                      return '値を入力してください';
+                    }
+                    return null;
+                  },
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  maxLength: 3,
+                  decoration: const InputDecoration(
+                    labelText: "在庫数",
+                    hintText: "書籍の在庫数を入力",
+                    icon: Icon(Icons.bar_chart_outlined),
+                  ),
+                  controller: zaikoController,
                 ),
-                controller: zaikoController,
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.all(15),
+              child: SizedBox(
+                width: 150,
+                height: 60,
+                child: ElevatedButton(
+                  child: Text('バーコード読込'),
+                  onPressed: (){
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => Barcode(),
+                        ),
+                    );
+                  },
+                ),
               ),
             ),
             SizedBox(
@@ -197,8 +239,10 @@ class AppendBooks extends State<FireUp>{
                   child: const Text('決定'),
                   onPressed: () {
                     //Firebaseにアップしてから戻る
-                    addFirestoredata();
-                    Navigator.pop(context);
+                    if(_formkey.currentState!.validate()){
+                      addFirestoredata();
+                      Navigator.pop(context);
+                    }
                   }
               ),
             ),
@@ -265,7 +309,7 @@ class FireSetup extends State<Setup> {
             margin: EdgeInsets.all(10),
             child: ListTile(
               leading: Icon(Icons.account_circle_outlined),
-              title: Text('アカウント'),
+              title: Text('アカウント情報'),
               onTap: () {
                 Navigator.push(
                     context, MaterialPageRoute(builder: (context) => Auth()));
@@ -276,7 +320,7 @@ class FireSetup extends State<Setup> {
             margin: EdgeInsets.all(10),
             child: ListTile(
               leading: Icon(Icons.add),
-              title: Text('本を借りる'),
+              title: Text('本を追加する'),
               onTap: () {
                 Navigator.push(
                     context, MaterialPageRoute(builder: (context) => FireUp()));

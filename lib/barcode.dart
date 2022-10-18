@@ -19,9 +19,15 @@ class _BarcodeState extends State<Barcode> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        useMaterial3: true,
+        colorSchemeSeed: Colors.green,
+      ),
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Barcode Scanner Example'),
+          title: Text('Barcode'),
+          centerTitle: true,
         ),
         body: Center(
           child: Column(
@@ -29,9 +35,11 @@ class _BarcodeState extends State<Barcode> {
             children: <Widget>[
               Container(
                 child: SizedBox(
+                  height: 100,
+                  width: 200,
                   child: ElevatedButton(
                     onPressed: scan,
-                    child: Text("Scan"),
+                    child: Text("読み取る"),
                   ),
                 ),
               ),

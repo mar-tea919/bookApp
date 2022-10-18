@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
+import 'package:barcode_scan2/barcode_scan2.dart';
 
 import './auth.dart';
 import './bookstore.dart';
@@ -142,6 +143,12 @@ class _MyFirestorePageState extends State<FirestoreLoad> {
 
 //本を追加するページ(Cloud FirestoreのAdd部分)
 class AppendBooks extends State<FireUp>{
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final _formkey=GlobalKey<FormState>();
@@ -156,7 +163,8 @@ class AppendBooks extends State<FireUp>{
         'name':bookController.text,
         'stock' : zaikoController.text,
         'isLent': 0,
-        'writer': "Null"
+        'writer': "Null",
+        'barcode' :readData,
       });
     }
 
@@ -214,23 +222,33 @@ class AppendBooks extends State<FireUp>{
                 ),
               ),
             ),
-            Container(
-              margin: EdgeInsets.all(15),
-              child: SizedBox(
-                width: 150,
-                height: 60,
-                child: ElevatedButton(
-                  child: Text('バーコード読込'),
-                  onPressed: (){
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => Barcode(),
-                        ),
-                    );
-                  },
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Container(
+                  margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                  child: SizedBox(
+                    width: 130,
+                    height: 60,
+                    child: ElevatedButton(
+                      onPressed: scan,
+                      child: Text('バーコード読込'),
+                    ),
+                  ),
                 ),
-              ),
+                Container(
+                  margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                  height: 80,
+                  width: 200,
+                  child: Text(
+                    readData,
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
             ),
             SizedBox(
               width: 180,
@@ -250,6 +268,34 @@ class AppendBooks extends State<FireUp>{
         ),
       ),
     );
+  }
+
+  String readData = "";
+  String typeData = "";
+
+  Future scan() async {
+    try {
+      var scan = await BarcodeScanner.scan();
+      setState(() => {
+        readData = scan.rawContent,
+        typeData = scan.format.name,
+      });
+    }
+    on PlatformException catch (e) {
+      if (e.code == BarcodeScanner.cameraAccessDenied) {
+        setState(() {
+          readData = 'Camera permissions are not valid.';
+        });
+      }
+      else {
+        setState(() => readData = 'Unexplained error : $e');
+      }
+    }
+    on FormatException{
+      setState(() => readData = 'Failed to read (I used the back button before starting the scan).');
+    } catch (e) {
+      setState(() => readData = 'Unknown error : $e');
+    }
   }
 }
 

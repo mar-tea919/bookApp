@@ -31,14 +31,14 @@ dependencies:
     sdk: flutter
 
 #Add the dependency for the Firebase Core Flutter SDK
-  firebase_core: ^1.12.0
+  firebase_core: ^2.1.1
   #  Firebase Auth
-  firebase_auth: ^3.3.8
+  firebase_auth: ^4.1.1
   google_sign_in: ^5.0.7
   #  Cloud Firestore
-  cloud_firestore: ^3.1.9
+  cloud_firestore: ^4.0.4
 
-  flutter_riverpod: ^1.0.4
+  flutter_riverpod: ^2.1.1
   flutter_signin_button: ^2.0.0
 
 
@@ -47,6 +47,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutterfire_ui: ^0.4.1+2
   barcode_scan2: ^4.2.1
+  flutter_launcher_icons: ^0.10.0
 
 dev_dependencies:
   flutter_test:
